@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(test)
 
-set(SOURCE_FILES GameCharacter.cpp GameCharacter.h
+set(SOURCE_FILES
         Transaction.cpp
         Transaction.h
         Account.cpp
