@@ -1,0 +1,2 @@
+Deposit 1000.71  Salary Nov24
+Withdrawal 280  Groceries

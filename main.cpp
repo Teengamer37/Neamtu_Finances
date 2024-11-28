@@ -1,23 +1,30 @@
 #include <iostream>
+#include <list>
 #include "Account.h"
 
 int main() {
-    Account account("John Doe");
+    std::list<Account> accounts;
+    Account::loadAccounts(accounts);
 
-    account.addTransaction(Transaction(Transaction::DEPOSIT, 1000.71, "Salary"));
-    account.addTransaction(Transaction(Transaction::WITHDRAWAL, 280.00, "Groceries"));
-
-    std::cout << "Transactions:\n";
-    for (const auto& transaction : account.getTransactions()) {
-        std::cout << transaction.toString() << "\n";
+    for (auto& account : accounts) {
+        account.loadTransactions(account.getOwner() + ".txt");
     }
 
-    std::cout << "Balance: " << account.getBalance() << "\n";
+    std::cout << "Transactions:\n";
+    for (auto& account : accounts) {
+        for (const auto &transaction: account.getTransactions()) {
+            std::cout << transaction.toString() << "\n";
+        }
 
-    account.saveToFile("John Doe.txt");
+        std::cout << "Balance: " << account.getBalance() << "\n";
 
-    Account loadedAccount("John Doe");
-    loadedAccount.loadFromFile("John Doe.txt");
+        account.saveTransactions(account.getOwner() + ".txt");
+    }
+
+
+
+    Account loadedAccount("JohnDoe", 22);
+    loadedAccount.loadTransactions("JohnDoe.txt");
 
     std::cout << "Loaded Transactions:\n";
     for (const auto& transaction : loadedAccount.getTransactions()) {

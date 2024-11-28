@@ -1,6 +1,9 @@
+#include <list>
 #include "Account.h"
 
-Account::Account(const std::string& owner) : owner(owner) {}
+Account::Account(Account* a) : owner(a->owner), password(a->password)  {}
+
+Account::Account(const std::string& o, int p) : owner(o), password(p) {}
 
 void Account::addTransaction(const Transaction& transaction) {
     transactions.push_back(transaction);
@@ -28,7 +31,7 @@ double Account::getBalance() const {
     return balance;
 }
 
-bool Account::loadFromFile(const std::string& filename) {
+bool Account::loadTransactions(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         return false;
@@ -47,7 +50,26 @@ bool Account::loadFromFile(const std::string& filename) {
     return true;
 }
 
-bool Account::saveToFile(const std::string& filename) const {
+bool Account::loadAccounts(std::list<Account>& accounts) {
+    std::ifstream file("accounts.txt");
+    if (!file.is_open()) {
+        return false;
+    }
+
+    if (!accounts.empty()) accounts.clear();
+    std::string owner;
+    int password;
+    while (file >> owner >> password) {
+        auto* p = new Account(owner, password);
+        accounts.emplace_back(p);
+        delete p;
+    }
+
+    file.close();
+    return true;
+}
+
+bool Account::saveTransactions(const std::string& filename) const {
     std::ofstream file(filename);
     if (!file.is_open()) {
         return false;
@@ -60,4 +82,8 @@ bool Account::saveToFile(const std::string& filename) const {
 
     file.close();
     return true;
+}
+
+const std::string &Account::getOwner() const {
+    return owner;
 }
