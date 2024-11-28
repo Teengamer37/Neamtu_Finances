@@ -1,9 +1,10 @@
 #include <list>
 #include "Account.h"
+#define KEY 'h'
 
-Account::Account(Account* a) : owner(a->owner), password(a->password)  {}
+Account::Account(Account* a) : name(a->name), password(a->password)  {}
 
-Account::Account(const std::string& o, int p) : owner(o), password(p) {}
+Account::Account(const std::string& name, int p) : name(name), password(p) {}
 
 void Account::addTransaction(const Transaction& transaction) {
     transactions.push_back(transaction);
@@ -43,6 +44,7 @@ bool Account::loadTransactions(const std::string& filename) {
     while (file >> typeStr >> amount) {
         std::getline(file, description);
         Transaction::Type type = (typeStr == "Deposit") ? Transaction::DEPOSIT : Transaction::WITHDRAWAL;
+        description = description.substr(1);
         transactions.emplace_back(type, amount, description);
     }
 
@@ -57,10 +59,9 @@ bool Account::loadAccounts(std::list<Account>& accounts) {
     }
 
     if (!accounts.empty()) accounts.clear();
-    std::string owner;
-    int password;
-    while (file >> owner >> password) {
-        auto* p = new Account(owner, password);
+    std::string name, password;
+    while (std::getline(file, name) && std::getline(file, password)) {
+        auto* p = new Account(name, std::stoi(xorEncryptDecrypt(password, KEY)));
         accounts.emplace_back(p);
         delete p;
     }
@@ -84,6 +85,14 @@ bool Account::saveTransactions(const std::string& filename) const {
     return true;
 }
 
-const std::string &Account::getOwner() const {
-    return owner;
+const std::string &Account::getName() const {
+    return name;
+}
+
+std::string Account::xorEncryptDecrypt(const std::string& data, char key) {
+    std::string result = data;
+    for (char& c : result) {
+        c ^= key; // XOR each character with the key
+    }
+    return result;
 }

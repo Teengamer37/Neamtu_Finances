@@ -8,7 +8,7 @@
 class Account {
 public:
     Account(Account* a);
-    Account(const std::string& owner, int password);
+    Account(const std::string& name, int password);
 
     void addTransaction(const Transaction& transaction);
     void removeTransaction(size_t index);
@@ -18,10 +18,12 @@ public:
     bool loadTransactions(const std::string& filename);
     static bool loadAccounts(std::list<Account>& accounts);
     bool saveTransactions(const std::string& filename) const;
-    const std::string &getOwner() const;
+    const std::string &getName() const;
+
+    static std::string xorEncryptDecrypt(const std::string& data, char key);
 
 private:
-    std::string owner;
+    std::string name;
     int password;
     std::vector<Transaction> transactions;
 };

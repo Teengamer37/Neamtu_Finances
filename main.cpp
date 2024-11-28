@@ -1,13 +1,14 @@
 #include <iostream>
 #include <list>
 #include "Account.h"
+#define KEY 'h'
 
 int main() {
     std::list<Account> accounts;
     Account::loadAccounts(accounts);
 
     for (auto& account : accounts) {
-        account.loadTransactions(account.getOwner() + ".txt");
+        account.loadTransactions(account.getName() + ".txt");
     }
 
     std::cout << "Transactions:\n";
@@ -18,13 +19,13 @@ int main() {
 
         std::cout << "Balance: " << account.getBalance() << "\n";
 
-        account.saveTransactions(account.getOwner() + ".txt");
+        account.saveTransactions(account.getName() + ".txt");
     }
 
 
 
-    Account loadedAccount("JohnDoe", 22);
-    loadedAccount.loadTransactions("JohnDoe.txt");
+    Account loadedAccount("BrianMay", 22);
+    loadedAccount.loadTransactions("BrianMay.txt");
 
     std::cout << "Loaded Transactions:\n";
     for (const auto& transaction : loadedAccount.getTransactions()) {
