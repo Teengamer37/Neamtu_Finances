@@ -7,12 +7,15 @@
 
 class Account {
 public:
+    Account();
     Account(Account* a);
+    Account(const Account& a);
     Account(const std::string& name, int password);
 
     void addTransaction(const Transaction& transaction);
     void removeTransaction(size_t index);
     const std::vector<Transaction>& getTransactions() const;
+    int getNumTransactions() const;
     double getBalance() const;
 
     bool loadTransactions(const std::string& filename);
@@ -21,6 +24,9 @@ public:
     static bool saveAccounts(const std::list<Account>& accounts);
     const std::string &getName() const;
     int getPassword() const;
+    void setPassword(int password);
+
+    bool operator==(const Account& other) const;
 
     static std::string xorEncryptDecrypt(const std::string& data, char key);
 

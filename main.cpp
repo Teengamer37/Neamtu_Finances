@@ -7,6 +7,17 @@
 
 std::list<Account> accounts;
 
+bool caseInsensitiveCompare(const std::string& str1, const std::string& str2) {
+    std::string lowerStr1 = str1;
+    std::string lowerStr2 = str2;
+
+    // Convert both strings to lowercase
+    std::transform(lowerStr1.begin(), lowerStr1.end(), lowerStr1.begin(), ::tolower);
+    std::transform(lowerStr2.begin(), lowerStr2.end(), lowerStr2.begin(), ::tolower);
+
+    return lowerStr1 == lowerStr2;
+}
+
 std::string login() {
     std::string username;
     int password;
@@ -52,15 +63,21 @@ void addAccount() {
         std::getline(std::cin, newUsername);
 
         if (std::count(newUsername.begin(), newUsername.end(), ' ')!=0) {
-            system("cls");
-            std::cout << "\033[31mUsername cannot have spaces! Try again\033[0m" << std::endl;
             ok = false;
+            std::string abort;
+            system("cls");
+            std::cout << "\033[31mUsername cannot have spaces!\033[0m Would you like to try again? (type 'n' to abort) " << std::endl;
+            std::cin >> abort;
+            if (caseInsensitiveCompare(abort, "n")) return;
         } else {
             for (const auto& account : accounts) {
                 if (account.getName() == newUsername) {
+                    std::string abort;
                     ok = false;
                     system("cls");
-                    std::cout << "\033[31mUsername already exists! Try again\033[0m" << std::endl;
+                    std::cout << "\033[31mUsername already exists!\033[0m Would you like to try again? (type 'n' to abort) " << std::endl;
+                    std::cin >> abort;
+                    if (caseInsensitiveCompare(abort, "n")) return;
                     break;
                 }
             }
@@ -73,10 +90,13 @@ void addAccount() {
         std::cin >> newPassword;
 
         if (std::cin.fail()) {
+            std::string abort;
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             system("cls");
-            std::cout << "\033[31mPassword must contain numbers only! Try again\033[0m" << std::endl;
+            std::cout << "\033[31mPassword must contain numbers only!\033[0m Would you like to try again? (type 'n' to abort) " << std::endl;
+            std::cin >> abort;
+            if (caseInsensitiveCompare(abort, "n")) return;
             ok = false;
         }
     } while (!ok);
@@ -89,15 +109,127 @@ void addAccount() {
 }
 
 void removeAccount() {
+    std::string oldUsername;
+    int oldPassword;
+    bool ok;
+    system("cls");
 
+    do {
+        ok = true;
+        std::cout << "Enter the username you want to delete: ";
+        std::cin >> oldUsername;
+        std::cout << "Enter the password of that account: ";
+        std::cin >> oldPassword;
+
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        if (caseInsensitiveCompare(oldUsername, "admin")) {
+            std::string abort;
+            ok = false;
+            system("cls");
+            std::cout << "\033[31mYou cannot delete the admin profile!\033[0m Would you like to try again? (type 'n' to abort) ";
+            std::cin >> abort;
+            if (caseInsensitiveCompare(abort, "n")) return;
+        } else {
+            ok = false;
+            Account removedAccount;
+            for (const auto& account : accounts) {
+                if (account.getName() == oldUsername && account.getPassword() == oldPassword) {
+                    ok = true;
+                    removedAccount = account;
+                    break;
+                }
+            }
+            if (!ok) {
+                std::string abort;
+                system("cls");
+                std::cout << "\033[31mUsername does not exist or wrong password!\033[0m Would you like to try again? (type 'n' to abort) ";
+                std::cin >> abort;
+                if (caseInsensitiveCompare(abort, "n")) return;
+            } else {
+                accounts.remove(removedAccount);
+                Account::saveAccounts(accounts);
+
+                system("cls");
+                std::cout << "\033[32mAccount removed! Old username: " << removedAccount.getName() << " - Old password: " << removedAccount.getPassword() << "\033[0m" << std::endl;
+            }
+        }
+    } while (!ok);
 }
 
 void viewAccounts() {
+    char c;
+    system("cls");
+    for (const auto& account : accounts) {
+        if (account.getName() != "admin")
+        std::cout << "Username: " << account.getName() << " - Password: " << account.getPassword() << " - No. of transactions: " << account.getNumTransactions() << std::endl;
+    }
 
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << std::endl << "Press any key and then Enter to return to menu... " << std::flush;
+    std::cin.get();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 void changeAccPw() {
+    std::string user;
+    int pwd;
+    bool ok;
+    system("cls");
 
+    do {
+        std::cout << "Enter username: ";
+        std::cin >> user;
+        std::cout << "Enter current password: ";
+        std::cin >> pwd;
+
+        if (std::cin.fail()) {
+            ok = false;
+            std::string abort;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            system("cls");
+            std::cout << "\033[31mUsername not found or wrong password!\033[0m Would you like to try again? (type 'n' to abort) ";
+            std::cin >> abort;
+            if (caseInsensitiveCompare(abort, "n")) return;
+        } else if (user == "admin") {
+            ok = false;
+
+            std::string abort;
+            system("cls");
+            std::cout << "\033[31mWrong option to change admin's password!\033[0m Would you like to try again? (type 'n' to abort) ";
+            std::cin >> abort;
+            if (caseInsensitiveCompare(abort, "n")) return;
+        } else {
+            ok = false;
+            for (auto& account : accounts) {
+                if (account.getName() == user && account.getPassword() == pwd) {
+                    int newPwd;
+                    do {
+                        std::cout << "Enter new password \033[31m(numbers only)\033[0m: ";
+                        std::cin >> newPwd;
+
+                        if (std::cin.fail()) {
+                            std::cin.clear();
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            system("cls");
+                            std::cout << "\033[31mPassword must contain numbers only!\033[0m" << std::endl;
+                        } else {
+                            account.setPassword(newPwd);
+                            Account::saveAccounts(accounts);
+                            ok = true;
+
+                            system("cls");
+                            std::cout << "\033[32mPassword for " << account.getName() << " changed! New password: " << newPwd << std::endl;
+                        }
+                    } while (!ok);
+                    break;
+                }
+            }
+        }
+    } while (!ok);
 }
 
 void addAccTransaction() {

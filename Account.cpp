@@ -2,7 +2,11 @@
 #include "Account.h"
 #define KEY 'h'
 
+Account::Account() {}
+
 Account::Account(Account* a) : name(a->name), password(a->password)  {}
+
+Account::Account(const Account &a) : name(a.name), password(a.password) {}
 
 Account::Account(const std::string& name, int p) : name(name), password(p) {}
 
@@ -18,6 +22,10 @@ void Account::removeTransaction(size_t index) {
 
 const std::vector<Transaction>& Account::getTransactions() const {
     return transactions;
+}
+
+int Account::getNumTransactions() const {
+    return transactions.size();
 }
 
 double Account::getBalance() const {
@@ -99,6 +107,11 @@ bool Account::saveAccounts(const std::list<Account> &accounts) {
     return true;
 }
 
+bool Account::operator==(const Account &other) const {
+    if (this->name == other.name && this->password == other.password) return true;
+    return false;
+}
+
 const std::string &Account::getName() const {
     return name;
 }
@@ -113,4 +126,8 @@ std::string Account::xorEncryptDecrypt(const std::string& data, char key) {
 
 int Account::getPassword() const {
     return password;
+}
+
+void Account::setPassword(int password) {
+    Account::password = password;
 }
