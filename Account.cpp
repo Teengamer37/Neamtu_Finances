@@ -85,6 +85,20 @@ bool Account::saveTransactions(const std::string& filename) const {
     return true;
 }
 
+bool Account::saveAccounts(const std::list<Account> &accounts) {
+    std::ofstream file("accounts.txt");
+    if (!file.is_open()) {
+        return false;
+    }
+
+    for (const auto& account : accounts) {
+        file << account.getName() << "\n" << xorEncryptDecrypt(std::to_string(account.getPassword()), KEY) << "\n";
+    }
+
+    file.close();
+    return true;
+}
+
 const std::string &Account::getName() const {
     return name;
 }
@@ -95,4 +109,8 @@ std::string Account::xorEncryptDecrypt(const std::string& data, char key) {
         c ^= key; // XOR each character with the key
     }
     return result;
+}
+
+int Account::getPassword() const {
+    return password;
 }

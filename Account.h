@@ -18,7 +18,9 @@ public:
     bool loadTransactions(const std::string& filename);
     static bool loadAccounts(std::list<Account>& accounts);
     bool saveTransactions(const std::string& filename) const;
+    static bool saveAccounts(const std::list<Account>& accounts);
     const std::string &getName() const;
+    int getPassword() const;
 
     static std::string xorEncryptDecrypt(const std::string& data, char key);
 
