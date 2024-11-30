@@ -4,8 +4,21 @@
 #include <algorithm>
 #include "Account.h"
 #define KEY 'h'
+#ifdef _WIN32
+#define OS "windows"
+#elif __unix__
+#define OS "unix"
+#endif
 
 std::list<Account> accounts;
+
+void clearConsole() {
+    if (OS=="windows") {
+        system("cls");
+    } else {
+        system("clear");
+    }
+}
 
 bool caseInsensitiveCompare(const std::string& str1, const std::string& str2) {
     std::string lowerStr1 = str1;
@@ -42,7 +55,7 @@ std::string login() {
             }
         }
 
-        system("cls");
+        clearConsole();
 
         if (!ok) std::cout << "\033[31mWrong username and/or password! Please try again\033[0m" << std::endl;
     } while (!ok);
@@ -54,7 +67,7 @@ void addAccount() {
     std::string newUsername;
     int newPassword;
     bool ok;
-    system("cls");
+    clearConsole();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     do {
@@ -65,11 +78,11 @@ void addAccount() {
         if (std::count(newUsername.begin(), newUsername.end(), ' ')!=0) {
             ok = false;
             std::string abort;
-            system("cls");
+            clearConsole();
             std::cout << "\033[31mUsername cannot have spaces!\033[0m Would you like to try again? (type 'n' to abort) " << std::endl;
             std::cin >> abort;
             if (caseInsensitiveCompare(abort, "n")) {
-                system("cls");
+                clearConsole();
                 return;
             }
         } else {
@@ -77,11 +90,11 @@ void addAccount() {
                 if (account.getName() == newUsername) {
                     std::string abort;
                     ok = false;
-                    system("cls");
+                    clearConsole();
                     std::cout << "\033[31mUsername already exists!\033[0m Would you like to try again? (type 'n' to abort) " << std::endl;
                     std::cin >> abort;
                     if (caseInsensitiveCompare(abort, "n")) {
-                        system("cls");
+                        clearConsole();
                         return;
                     }
                     break;
@@ -99,11 +112,11 @@ void addAccount() {
             std::string abort;
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            system("cls");
+            clearConsole();
             std::cout << "\033[31mPassword must contain numbers only!\033[0m Would you like to try again? (type 'n' to abort) " << std::endl;
             std::cin >> abort;
             if (caseInsensitiveCompare(abort, "n")) {
-                system("cls");
+                clearConsole();
                 return;
             }
             ok = false;
@@ -113,7 +126,7 @@ void addAccount() {
     accounts.push_back(new Account(newUsername, newPassword));
     Account::saveAccounts(accounts);
 
-    system("cls");
+    clearConsole();
     std::cout << "\033[32mNew account added! Username: " << newUsername << " - Password: " << newPassword << "\033[0m" << std::endl;
 }
 
@@ -121,7 +134,7 @@ void removeAccount() {
     std::string oldUsername;
     int oldPassword;
     bool ok;
-    system("cls");
+    clearConsole();
 
     do {
         ok = true;
@@ -137,11 +150,11 @@ void removeAccount() {
         if (caseInsensitiveCompare(oldUsername, "admin")) {
             std::string abort;
             ok = false;
-            system("cls");
+            clearConsole();
             std::cout << "\033[31mYou cannot delete the admin profile!\033[0m Would you like to try again? (type 'n' to abort) ";
             std::cin >> abort;
             if (caseInsensitiveCompare(abort, "n")) {
-                system("cls");
+                clearConsole();
                 return;
             }
         } else {
@@ -156,18 +169,18 @@ void removeAccount() {
             }
             if (!ok) {
                 std::string abort;
-                system("cls");
+                clearConsole();
                 std::cout << "\033[31mUsername does not exist or wrong password!\033[0m Would you like to try again? (type 'n' to abort) ";
                 std::cin >> abort;
                 if (caseInsensitiveCompare(abort, "n")) {
-                    system("cls");
+                    clearConsole();
                     return;
                 }
             } else {
                 accounts.remove(removedAccount);
                 Account::saveAccounts(accounts);
 
-                system("cls");
+                clearConsole();
                 std::cout << "\033[32mAccount removed! Old username: " << removedAccount.getName() << " - Old password: " << removedAccount.getPassword() << "\033[0m" << std::endl;
             }
         }
@@ -176,7 +189,7 @@ void removeAccount() {
 
 void viewAccounts() {
     char c;
-    system("cls");
+    clearConsole();
     for (const auto& account : accounts) {
         if (account.getName() != "admin")
         std::cout << "Username: " << account.getName() << " - Password: " << account.getPassword() << " - No. of transactions: " << account.getNumTransactions() << std::endl;
@@ -186,14 +199,14 @@ void viewAccounts() {
     std::cout << std::endl << "Press any key and then Enter to return to menu... " << std::flush;
     std::cin.get();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    system("cls");
+    clearConsole();
 }
 
 void changeAccPw() {
     std::string user;
     int pwd;
     bool ok;
-    system("cls");
+    clearConsole();
 
     do {
         std::cout << "Enter username: ";
@@ -206,22 +219,22 @@ void changeAccPw() {
             std::string abort;
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            system("cls");
+            clearConsole();
             std::cout << "\033[31mUsername not found or wrong password!\033[0m Would you like to try again? (type 'n' to abort) ";
             std::cin >> abort;
             if (caseInsensitiveCompare(abort, "n")) {
-                system("cls");
+                clearConsole();
                 return;
             }
         } else if (user == "admin") {
             ok = false;
 
             std::string abort;
-            system("cls");
+            clearConsole();
             std::cout << "\033[31mWrong option to change admin's password!\033[0m Would you like to try again? (type 'n' to abort) ";
             std::cin >> abort;
             if (caseInsensitiveCompare(abort, "n")) {
-                system("cls");
+                clearConsole();
                 return;
             }
         } else {
@@ -236,14 +249,14 @@ void changeAccPw() {
                         if (std::cin.fail()) {
                             std::cin.clear();
                             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                            system("cls");
+                            clearConsole();
                             std::cout << "\033[31mPassword must contain numbers only!\033[0m" << std::endl;
                         } else {
                             account.setPassword(newPwd);
                             Account::saveAccounts(accounts);
                             ok = true;
 
-                            system("cls");
+                            clearConsole();
                             std::cout << "\033[32mPassword for " << account.getName() << " changed! New password: " << newPwd << "\033[0m" << std::endl;
                         }
                     } while (!ok);
@@ -258,7 +271,7 @@ void addAccTransaction() {
     std::string user;
     bool ok;
 
-    system("cls");
+    clearConsole();
     do {
         ok = false;
         bool found = false;
@@ -267,11 +280,11 @@ void addAccTransaction() {
 
         if (user == "admin") {
             std::string abort;
-            system("cls");
+            clearConsole();
             std::cout << "\033[31mYou cannot add transactions to admin account!\033[0m Would you like to try again? (type 'n' to abort) ";
             std::cin >> abort;
             if (caseInsensitiveCompare(abort, "n")) {
-                system("cls");
+                clearConsole();
                 return;
             }
         } else {
@@ -291,20 +304,20 @@ void addAccTransaction() {
                             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
                             std::string abort;
-                            system("cls");
+                            clearConsole();
                             std::cout << "\033[31mYou entered a non-valid option!\033[0m Would you like to try again? (type 'n' to abort) ";
                             std::cin >> abort;
                             if (caseInsensitiveCompare(abort, "n")) {
-                                system("cls");
+                                clearConsole();
                                 return;
                             }
                         } else if (type != 1 && type != 2) {
                             std::string abort;
-                            system("cls");
+                            clearConsole();
                             std::cout << "\033[31mYou entered a non-valid option!\033[0m Would you like to try again? (type 'n' to abort) ";
                             std::cin >> abort;
                             if (caseInsensitiveCompare(abort, "n")) {
-                                system("cls");
+                                clearConsole();
                                 return;
                             }
                         } else {
@@ -323,20 +336,20 @@ void addAccTransaction() {
                             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
                             std::string abort;
-                            system("cls");
+                            clearConsole();
                             std::cout << "\033[31mYou must enter a positive number!\033[0m Would you like to try again? (type 'n' to abort) ";
                             std::cin >> abort;
                             if (caseInsensitiveCompare(abort, "n")) {
-                                system("cls");
+                                clearConsole();
                                 return;
                             }
                         } else if (amount <= 0) {
                             std::string abort;
-                            system("cls");
+                            clearConsole();
                             std::cout << "\033[31mYou must enter a positive number!\033[0m Would you like to try again? (type 'n' to abort) ";
                             std::cin >> abort;
                             if (caseInsensitiveCompare(abort, "n")) {
-                                system("cls");
+                                clearConsole();
                                 return;
                             }
                         } else {
@@ -360,29 +373,30 @@ void addAccTransaction() {
                     std::cout << "Would you like to add other transactions? (type 'y' to continue) ";
                     std::cin >> c;
                     if (!caseInsensitiveCompare(c, "y")) ok = true;
-                    system("cls");
+                    clearConsole();
                     break;
                 }
             }
 
             if (!found) {
                 std::string abort;
-                system("cls");
+                clearConsole();
                 std::cout << "\033[31mNo username found!\033[0m Would you like to try again? (type 'n' to abort) ";
                 std::cin >> abort;
                 if (caseInsensitiveCompare(abort, "n")) {
-                    system("cls");
+                    clearConsole();
                     return;
                 }
             }
         }
     } while (!ok);
 
-    system("cls");
+    clearConsole();
 }
 
 void viewTransactions() {
-
+    int selection;
+    clearConsole();
 }
 
 void changeAdminPw() {
@@ -393,7 +407,7 @@ bool adminMenu() {
     int selection;
     bool exit = false;
 
-    system("cls");
+    clearConsole();
 
     do {
         std::cout << "Welcome \033[93madmin\033[0m" << std::endl << std::endl;
@@ -442,7 +456,7 @@ bool adminMenu() {
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 }
 
-                system("cls");
+                clearConsole();
                 std::cout << "\033[31mYour selection is not a valid one. Please try again\033[0m" << std::endl << std::endl;
         }
     } while (true);
