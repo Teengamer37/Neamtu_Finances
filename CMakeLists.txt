@@ -11,6 +11,7 @@ set(SOURCE_FILES
         Account.cpp
         Account.h
         AdminMenu.h
+        UserMenu.h
 )
 add_executable(${CMAKE_PROJECT_NAME} main.cpp)
 add_library(${CMAKE_PROJECT_NAME}_lib ${SOURCE_FILES})

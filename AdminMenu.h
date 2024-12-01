@@ -1,5 +1,4 @@
 #include <utility>
-
 #ifndef NEAMTU_FINANCES_ADMINMENU_H
 #define NEAMTU_FINANCES_ADMINMENU_H
 #ifdef _WIN32
@@ -333,7 +332,7 @@ void addAccTransaction() {
                     account.saveTransactions(account.getName() + ".txt");
 
                     std::cout << std::endl << "Transaction added to " << account.getName() << "!" << std::endl
-                              << (type==1 ? "\033[32mDeposit\033[0m" : "\033[31mWithdrawal\033[0m") << " - " << amount << " - " << description << std::endl;
+                              << (type==1 ? "\033[32mDeposit\033[0m" : "\033[31mWithdrawal\033[0m") << " - " << amount << " \033[93mEuro\033[0m - \033[94m" << description << "\033[0m" << std::endl;
 
                     std::string c;
                     std::cout << "Would you like to add other transactions? (type 'y' to continue) ";

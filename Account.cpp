@@ -6,7 +6,7 @@ Account::Account() {}
 
 Account::Account(Account* a) : name(a->name), password(a->password)  {}
 
-Account::Account(const Account &a) : name(a.name), password(a.password) {}
+Account::Account(const Account& other) : name(other.name), password(other.password), transactions(other.transactions) {}
 
 Account::Account(const std::string& name, int p) : name(name), password(p) {}
 

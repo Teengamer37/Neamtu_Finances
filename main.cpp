@@ -3,7 +3,7 @@
 #include <limits>
 #include <algorithm>
 #include "Account.h"
-#include "AdminMenu.h"
+#include "UserMenu.h"
 #define KEY 'h'
 #ifdef _WIN32
 #define OS "windows"
@@ -43,10 +43,6 @@ std::string login() {
     return username;
 }
 
-bool menu(std::string username) {
-
-}
-
 int main() {
     std::string username;
 
@@ -58,44 +54,11 @@ int main() {
     }
 
     do {
+        clearConsole();
         username = login();
         if (username == "admin") loggedIn = adminMenu();
         else loggedIn = menu(username);
     } while (loggedIn);
-
-
-
-
-
-
-
-
-
-
-
-
-    std::cout << "Transactions:\n";
-    for (auto& account : accounts) {
-        for (const auto &transaction: account.getTransactions()) {
-            std::cout << transaction.toString() << "\n";
-        }
-
-        std::cout << "Balance: " << account.getBalance() << "\n";
-
-        account.saveTransactions(account.getName() + ".txt");
-    }
-
-
-
-    Account loadedAccount("BrianMay", 22);
-    loadedAccount.loadTransactions("BrianMay.txt");
-
-    std::cout << "Loaded Transactions:\n";
-    for (const auto& transaction : loadedAccount.getTransactions()) {
-        std::cout << transaction.toString() << "\n";
-    }
-
-    std::cout << "Loaded Balance: " << loadedAccount.getBalance() << "\n";
 
     return 0;
 }

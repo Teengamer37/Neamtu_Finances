@@ -16,5 +16,6 @@ std::string Transaction::getDescription() const {
 }
 
 std::string Transaction::toString() const {
-    return (type==DEPOSIT ? std::string("\x1B[32mDeposit\x1B[0m") : std::string("\033[31mWithdrawal\033[0m")) + ": " + std::to_string(amount).substr(0, std::to_string(amount).find('.')+3) + " \033[93mEuro\033[0m - \033[94m" + description + "\033[0m";
+    return (type==DEPOSIT ? std::string("\x1B[32mDeposit\x1B[0m") : std::string("\033[31mWithdrawal\033[0m")) + ": " +
+    std::to_string(amount).substr(0, std::to_string(amount).find('.')+3) + " \033[93mEuro\033[0m - \033[94m" + description + "\033[0m";
 }
