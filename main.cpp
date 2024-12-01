@@ -189,6 +189,7 @@ void removeAccount() {
 
 void viewAccounts() {
     char c;
+    std::string selection;
     clearConsole();
     for (const auto& account : accounts) {
         if (account.getName() != "admin")
@@ -196,9 +197,8 @@ void viewAccounts() {
     }
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cout << std::endl << "Press any key and then Enter to return to menu... " << std::flush;
-    std::cin.get();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cout << "Press Enter to continue... ";
+    std::getline(std::cin, selection);
     clearConsole();
 }
 
@@ -395,8 +395,76 @@ void addAccTransaction() {
 }
 
 void viewTransactions() {
-    int selection;
+    std::string selection;
     clearConsole();
+
+    std::cout << "Do you want to print ALL accounts history or specific ones? (type 'a' to print all) ";
+    std::cin >> selection;
+    if (caseInsensitiveCompare(selection, "a")) {
+        clearConsole();
+        for (const auto& account : accounts) {
+             if (account.getName() != "admin") {
+                std::cout << "Account name: " << account.getName() << std::endl;
+                for (const auto &transaction: account.getTransactions()) {
+                    std::cout << transaction.toString() << std::endl;
+                }
+                if (account.getTransactions().empty()) std::cout << "\033[33mNo transactions made.\033[0m" << std::endl;
+                else {
+                    std::cout << "Account balance: ";
+                    if (account.getBalance() <= 0) std::cout << "\033[31m" << account.getBalance() << " Euro\033[0m" << std::endl;
+                    else std::cout << "\033[32m" << account.getBalance() << " Euro\033[0m" << std::endl;
+                }
+                std::cout << std::endl;
+            }
+        }
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Press Enter to continue... ";
+        std::getline(std::cin, selection);
+        clearConsole();
+    } else {
+        std::string name;
+        bool cycle = true;
+
+        do {
+            std::cout << "Enter account name: ";
+            std::cin >> name;
+            if (!caseInsensitiveCompare(name, "admin")) {
+                bool found = false;
+                for (const auto &account: accounts) {
+                    if (caseInsensitiveCompare(account.getName(), name)) {
+                        found = true;
+                        for (const auto &transaction: account.getTransactions()) {
+                            std::cout << transaction.toString() << std::endl;
+                        }
+                        if (account.getTransactions().empty()) std::cout << "\033[33mNo transactions made.\033[0m" << std::endl;
+                        else {
+                            std::cout << "Account balance: ";
+                            if (account.getBalance() <= 0) std::cout << "\033[31m" << account.getBalance() << " Euro\033[0m" << std::endl;
+                            else std::cout << "\033[32m" << account.getBalance() << " Euro\033[0m" << std::endl;
+                        }
+                        std::cout << std::endl;
+                        break;
+                    }
+                }
+                if (!found) std::cout << "\033[31mNo account found with that name!\033[0m ";
+                std::string choice;
+                std::cout << "Would you like to check other accounts? (type 'y' and Enter to continue) ";
+                std::cin >> choice;
+                if (!caseInsensitiveCompare(choice, "y")) cycle = false;
+                clearConsole();
+            } else {
+                std::string abort;
+                clearConsole();
+                std::cout << "\033[31mYou cannot see transactions to admin account!\033[0m Would you like to try again? (type 'n' to abort) ";
+                std::cin >> abort;
+                if (caseInsensitiveCompare(abort, "n")) {
+                    clearConsole();
+                    return;
+                }
+            }
+        } while (cycle);
+    }
 }
 
 void changeAdminPw() {
