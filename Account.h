@@ -7,27 +7,33 @@
 
 class Account {
 public:
+    //costruttori
     Account();
     Account(Account* a);
     Account(const Account& a);
     Account(const std::string& name, int password);
 
-    void addTransaction(const Transaction& transaction);
-    void removeTransaction(size_t index);
+    //operazioni su singolo oggetto
+    bool addTransaction(const Transaction& transaction);
     const std::vector<Transaction>& getTransactions() const;
     int getNumTransactions() const;
     double getBalance() const;
 
-    bool loadTransactions(const std::string& filename);
+    //metodi per lettura/scrittura file
+    bool loadTransactions();
     static bool loadAccounts(std::list<Account>& accounts);
-    bool saveTransactions(const std::string& filename) const;
+    bool saveTransactions() const;
     static bool saveAccounts(const std::list<Account>& accounts);
+
+    //getter/setter
     const std::string &getName() const;
     int getPassword() const;
     void setPassword(int password);
 
+    //override operatore ==
     bool operator==(const Account& other) const;
 
+    //metodo XOR per crittare/decrittare stringhe
     static std::string xorEncryptDecrypt(const std::string& data, char key);
 
 private:
